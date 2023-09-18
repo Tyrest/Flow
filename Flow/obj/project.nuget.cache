@@ -1,0 +1,14 @@
+{
+  "version": 2,
+  "dgSpecHash": "msA06YaNOCVHAwY4jBytVnmZOpl3j0C7hySPrgauVV4qpjuvT+D+Anbuqp51sTkU7ZCFj0iqzlxTnMrIO3T+qQ==",
+  "success": true,
+  "projectFilePath": "/Users/tyler/RiderProjects/Flow/Flow/Flow.csproj",
+  "expectedPackageFiles": [
+    "/Users/tyler/.nuget/packages/monogame.content.builder.task/3.8.1.303/monogame.content.builder.task.3.8.1.303.nupkg.sha512",
+    "/Users/tyler/.nuget/packages/monogame.framework.desktopgl/3.8.1.303/monogame.framework.desktopgl.3.8.1.303.nupkg.sha512",
+    "/Users/tyler/.nuget/packages/microsoft.netcore.app.ref/6.0.20/microsoft.netcore.app.ref.6.0.20.nupkg.sha512",
+    "/Users/tyler/.nuget/packages/microsoft.aspnetcore.app.ref/6.0.20/microsoft.aspnetcore.app.ref.6.0.20.nupkg.sha512",
+    "/Users/tyler/.nuget/packages/microsoft.netcore.app.host.osx-arm64/6.0.20/microsoft.netcore.app.host.osx-arm64.6.0.20.nupkg.sha512"
+  ],
+  "logs": []
+}
