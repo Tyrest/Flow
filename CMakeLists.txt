@@ -14,7 +14,7 @@ include_directories(${GLEW_INCLUDE_DIRS})
 # include_directories(${GLM_INCLUDE_DIRS})
 
 # Add your source files
-add_executable(${PROJECT_NAME} src/main.cpp src/gl.c)
+add_executable(${PROJECT_NAME} src/main.cpp src/gl.c src/shapes/cube.cpp)
 
 # Link libraries
 target_link_libraries(${PROJECT_NAME} PRIVATE glfw)
@@ -26,3 +26,7 @@ configure_file(src/assets/2.2.basic_lighting.vs assets/2.2.basic_lighting.vs COP
 configure_file(src/assets/2.2.basic_lighting.fs assets/2.2.basic_lighting.fs COPYONLY)
 configure_file(src/assets/2.2.light_cube.vs assets/2.2.light_cube.vs COPYONLY)
 configure_file(src/assets/2.2.light_cube.fs assets/2.2.light_cube.fs COPYONLY)
+configure_file(src/assets/lighting.vs assets/lighting.vs COPYONLY)
+configure_file(src/assets/lighting.fs assets/lighting.fs COPYONLY)
+configure_file(src/assets/directional_lighting.fs assets/directional_lighting.fs COPYONLY)
+configure_file(src/assets/directional_lighting.vs assets/directional_lighting.vs COPYONLY)
