@@ -10,6 +10,7 @@
 #include "input.h"
 #include "shapes/shape.h"
 #include "shapes/cube.h"
+#include "shapes/sphere.h"
 
 #include <iostream>
 
@@ -54,6 +55,7 @@ int main()
     // Shader lightCubeShader("assets/2.2.light_cube.vs", "assets/2.2.light_cube.fs");
 
     Cube cube(lightingShader, lightDir);
+    Sphere sphere(lightingShader, lightDir, glm::vec3(1.0f, 0.0f, 0.0f), glm::vec3(0.0f, 2.0f, 0.0f));
     // Cube lightCube(lightCubeShader, lightDir, glm::vec3(1.0f, 1.0f, 1.0f), lightPos, glm::vec3(0.0f));
 
     Input input(camera, window);
@@ -80,8 +82,9 @@ int main()
         lightingShader.setMat4("view", view);
 
         // render the cube
-        cube.rotate(glm::radians(static_cast<float>(glfwGetTime()) * 100.0f), glm::vec3(1.0f, 0.3f, 0.5f));
+        // cube.rotate(glm::radians(static_cast<float>(glfwGetTime()) * 100.0f), glm::vec3(1.0f, 0.3f, 0.5f));
         cube.draw(camera, projection, view);
+        sphere.draw(camera, projection, view);
 
         // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
         glfwSwapBuffers(window);

@@ -14,7 +14,7 @@ include_directories(${GLEW_INCLUDE_DIRS})
 # include_directories(${GLM_INCLUDE_DIRS})
 
 # Add your source files
-add_executable(${PROJECT_NAME} src/main.cpp src/gl.c src/shapes/cube.cpp)
+add_executable(${PROJECT_NAME} src/main.cpp src/gl.c src/shapes/shape.cpp src/shapes/cube.cpp src/shapes/sphere.cpp)
 
 # Link libraries
 target_link_libraries(${PROJECT_NAME} PRIVATE glfw)

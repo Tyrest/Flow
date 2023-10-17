@@ -59,6 +59,13 @@ Cube::Cube(const Shader &shader, const glm::vec3 &lightDir, const glm::vec3 &col
     // 1. bind buffer
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
     // 2. copy vertices array into buffer's memory
+    // Print all vertices
+    for (int i = 0; i < sizeof(vertices) / sizeof(float); i++)
+    {
+        std::cout << vertices[i] << " ";
+        if ((i + 1) % 6 == 0)
+            std::cout << std::endl;
+    }
     glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
     // 3. set vertex attribute pointers
     // position attribute
