@@ -4,9 +4,6 @@
 
 #include "cube.h"
 
-const unsigned int SCR_WIDTH = 800;
-const unsigned int SCR_HEIGHT = 600;
-
 const float Cube::vertices[] = {
     -0.5f, -0.5f, -0.5f, 0.0f, 0.0f, -1.0f,
     0.5f, -0.5f, -0.5f, 0.0f, 0.0f, -1.0f,
@@ -59,13 +56,6 @@ Cube::Cube(const Shader &shader, const glm::vec3 &lightDir, const glm::vec3 &col
     // 1. bind buffer
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
     // 2. copy vertices array into buffer's memory
-    // Print all vertices
-    for (int i = 0; i < sizeof(vertices) / sizeof(float); i++)
-    {
-        std::cout << vertices[i] << " ";
-        if ((i + 1) % 6 == 0)
-            std::cout << std::endl;
-    }
     glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
     // 3. set vertex attribute pointers
     // position attribute
@@ -99,6 +89,3 @@ void Cube::draw(const Camera &camera, const glm::mat4 &projection, const glm::ma
     glBindVertexArray(VAO);
     glDrawArrays(GL_TRIANGLES, 0, 36);
 }
-
-unsigned int Cube::VAO = 0;
-unsigned int Cube::VBO = 0;

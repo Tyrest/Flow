@@ -8,27 +8,35 @@
 const unsigned int SCR_WIDTH = 800;
 const unsigned int SCR_HEIGHT = 600;
 
-const float Sphere::cube_vertices[] = {
-    -0.5f, -0.5f, -0.5f, 0.0f, 0.0f, 1.0f,
-    0.5f, -0.5f, -0.5f, 0.0f, 0.0f, 1.0f,
-    0.5f, 0.5f, -0.5f, 0.0f, 0.0f, 1.0f};
+const float Sphere::test_vertices[] = {
+    -0.5f, -0.5f * float(sqrt(3)) / 3, 0.0f, 0.0f, 0.0f, 1.0f,    // Lower left corner
+    0.5f, -0.5f * float(sqrt(3)) / 3, 0.0f, 0.0f, 0.0f, 1.0f,     // Lower right corner
+    0.0f, 0.5f * float(sqrt(3)) * 2 / 3, 0.0f, 0.0f, 0.0f, 1.0f,  // Upper corner
+    -0.5f / 2, 0.5f * float(sqrt(3)) / 6, 0.0f, 0.0f, 0.0f, 1.0f, // Inner left
+    0.5f / 2, 0.5f * float(sqrt(3)) / 6, 0.0f, 0.0f, 0.0f, 1.0f,  // Inner right
+    0.0f, -0.5f * float(sqrt(3)) / 3, 0.0f, 0.0f, 0.0f, 1.0f,     // Inner down
+};
 
-Sphere::Sphere(const Shader &shader, const glm::vec3 &lightDir, const glm::vec3 &color, const glm::vec3 &position, float angle, const glm::vec3 &rotationAxis) : Shape(shader, lightDir, color, position, angle, rotationAxis)
+const uint Sphere::test_indices[] = {
+    0, 3, 5, // Lower left triangle
+    3, 2, 4, // Upper triangle
+    5, 4, 1  // Lower right triangle
+};
+
+Sphere::Sphere(const Shader &shader, const glm::vec3 &lightDir, const glm::vec3 &color, const glm::vec3 &position, float angle, const glm::vec3 &rotationAxis) : Shape(shader, lightDir, color, position, angle, rotationAxis), interleavedStride(24)
 {
     glGenVertexArrays(1, &VAO);
     glGenBuffers(1, &VBO);
+    glGenBuffers(1, &EBO);
 
     glBindVertexArray(VAO);
     // 1. bind buffer
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
     // 2. copy vertices array into buffer's memory
-    buildVertices(2, 2);
-    for (int i = 0; i < toDraw.size() / 6; i++)
-    {
-        std::cout << "x: " << toDraw[i * 6] << "\ty: " << toDraw[i * 6 + 1] << "\tz: " << toDraw[i * 6 + 2] << "\tnx: " << toDraw[i * 6 + 3] << "\tny: " << toDraw[i * 6 + 4] << "\tnz: " << toDraw[i * 6 + 5] << "\n";
-    }
-    glBufferData(GL_ARRAY_BUFFER, sizeof(cube_vertices), cube_vertices, GL_STATIC_DRAW);
-    // glBufferData(GL_ARRAY_BUFFER, sizeof(toDraw.data()), toDraw.data(), GL_STATIC_DRAW);
+    buildVertices(36, 18);
+    glBufferData(GL_ARRAY_BUFFER, interleavedVertices.size() * sizeof(float), interleavedVertices.data(), GL_STATIC_DRAW);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(uint), indices.data(), GL_STATIC_DRAW);
     // 3. set vertex attribute pointers
     // position attribute
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void *)nullptr);
@@ -36,16 +44,17 @@ Sphere::Sphere(const Shader &shader, const glm::vec3 &lightDir, const glm::vec3 
     // normal attribute
     glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void *)(3 * sizeof(float)));
     glEnableVertexAttribArray(1);
-    // unbind buffer
+    // unbind buffers
     glBindBuffer(GL_ARRAY_BUFFER, 0);
-    // unbind vertex array
     glBindVertexArray(0);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 }
 
 Sphere::~Sphere()
 {
     glDeleteVertexArrays(1, &VAO);
     glDeleteBuffers(1, &VBO);
+    glDeleteBuffers(1, &EBO);
 }
 
 void Sphere::draw(const Camera &camera, const glm::mat4 &projection, const glm::mat4 &view) const
@@ -59,27 +68,22 @@ void Sphere::draw(const Camera &camera, const glm::mat4 &projection, const glm::
     shader.setMat4("model", transform());
 
     glBindVertexArray(VAO);
-    glDrawArrays(GL_TRIANGLES, 0, 36);
+    glDrawElements(GL_TRIANGLES, indices.size() * sizeof(uint), GL_UNSIGNED_INT, 0);
 }
-
-unsigned int Sphere::VAO = 0;
-unsigned int Sphere::VBO = 0;
 
 void Sphere::clearVectors()
 {
     std::vector<float>().swap(vertices);
     std::vector<float>().swap(normals);
-    std::vector<float>().swap(interleavedVertices);
-    std::vector<float>().swap(toDraw);
+    std::vector<uint>().swap(indices);
 }
 
 void Sphere::buildVertices(int sectorCount, int stackCount)
 {
     clearVectors();
 
-    float x, y, z, xy;                  // vertex position
+    float x, y, z, xz;                  // vertex position
     float nx, ny, nz, lengthInv = 1.0f; // normal
-    // float s, t;                         // texCoord
 
     float sectorStep = 2 * PI / sectorCount;
     float stackStep = PI / stackCount;
@@ -88,35 +92,26 @@ void Sphere::buildVertices(int sectorCount, int stackCount)
     for (int i = 0; i <= stackCount; ++i)
     {
         stackAngle = PI / 2 - i * stackStep; // starting from pi/2 to -pi/2
-        xy = cosf(stackAngle);               // r * cos(u)
-        z = sinf(stackAngle);                // r * sin(u)
+        xz = cosf(stackAngle);               // r * cos(u)
+        y = sinf(stackAngle);                // r * sin(u)
 
         // add (sectorCount+1) vertices per stack
-        // the first and last vertices have same position and normal, but different tex coords
         for (int j = 0; j <= sectorCount; ++j)
         {
             sectorAngle = j * sectorStep; // starting from 0 to 2pi
 
             // vertex position
-            x = xy * cosf(sectorAngle); // r * cos(u) * cos(v)
-            y = xy * sinf(sectorAngle); // r * cos(u) * sin(v)
+            x = xz * cosf(sectorAngle); // r * cos(u) * cos(v)
+            z = xz * sinf(sectorAngle); // r * cos(u) * sin(v)
             addVertex(x, y, z);
 
             // normalized vertex normal
             nx = x * lengthInv;
             ny = y * lengthInv;
             nz = z * lengthInv;
-            // addNormal(nx, ny, nz);
-            addNormal(1.0f, 1.0f, 1.0f);
-
-            // // vertex tex coord between [0, 1]
-            // s = (float)j / sectorCount;
-            // t = (float)i / stackCount;
-            // addTexCoord(s, t);
+            addNormal(nx, ny, nz);
         }
     }
-
-    std::vector<unsigned int> indices;
 
     // indices
     //  k1--k1+1
@@ -150,20 +145,8 @@ void Sphere::buildVertices(int sectorCount, int stackCount)
         }
     }
 
-    std::cout << "Indices size: " << indices.size() << "\n";
-
     // generate interleaved vertex array as well
     buildInterleavedVertices();
-
-    for (int i = 0; i < indices.size(); i++)
-    {
-        toDraw.push_back(vertices[indices[i] * 3]);
-        toDraw.push_back(vertices[indices[i] * 3 + 1]);
-        toDraw.push_back(vertices[indices[i] * 3 + 2]);
-        toDraw.push_back(normals[indices[i] * 3]);
-        toDraw.push_back(normals[indices[i] * 3 + 1]);
-        toDraw.push_back(normals[indices[i] * 3 + 2]);
-    }
 }
 
 void Sphere::buildInterleavedVertices()
@@ -181,8 +164,5 @@ void Sphere::buildInterleavedVertices()
         interleavedVertices.push_back(normals[i]);
         interleavedVertices.push_back(normals[i + 1]);
         interleavedVertices.push_back(normals[i + 2]);
-
-        // interleavedVertices.push_back(texCoords[j]);
-        // interleavedVertices.push_back(texCoords[j + 1]);
     }
 }

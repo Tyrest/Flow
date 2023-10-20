@@ -82,7 +82,7 @@ int main()
         lightingShader.setMat4("view", view);
 
         // render the cube
-        // cube.rotate(glm::radians(static_cast<float>(glfwGetTime()) * 100.0f), glm::vec3(1.0f, 0.3f, 0.5f));
+        cube.rotate(glm::radians(static_cast<float>(glfwGetTime()) * 100.0f), glm::vec3(1.0f, 0.3f, 0.5f));
         cube.draw(camera, projection, view);
         sphere.draw(camera, projection, view);
 

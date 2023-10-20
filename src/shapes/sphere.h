@@ -11,8 +11,9 @@ public:
     Sphere(const Shader &shader, const glm::vec3 &lightDir, const glm::vec3 &color = glm::vec3(0.0f, 1.0f, 0.0f), const glm::vec3 &position = glm::vec3(0.0f), float angle = 0.0f, const glm::vec3 &rotation = glm::vec3(0.0f, 1.0f, 0.0f));
     ~Sphere();
     void draw(const Camera &camera, const glm::mat4 &projection, const glm::mat4 &view) const;
-    static unsigned int VAO;
-    static unsigned int VBO;
+    GLuint VAO;
+    GLuint VBO;
+    GLuint EBO;
 
 private:
     void clearVectors();
@@ -21,13 +22,14 @@ private:
     void buildVertices(int sectorCount, int stackCount);
     void buildInterleavedVertices();
 
-    const float *arr;
+    int interleavedStride;
     std::vector<float> vertices;
     std::vector<float> normals;
     std::vector<float> interleavedVertices;
-    std::vector<float> toDraw;
+    std::vector<uint> indices;
 
-    static const float cube_vertices[];
+    static const float test_vertices[];
+    static const uint test_indices[];
 };
 
 #endif
