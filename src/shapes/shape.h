@@ -20,7 +20,7 @@ public:
                                            angle(angle),
                                            rotationAxis(rotationAxis) {}
     virtual ~Shape() {}
-    virtual void draw(const Camera &camera, const glm::mat4 &projection, const glm::mat4 &view) const = 0;
+    virtual void draw(const Camera &camera) const = 0;
     void resize(float factor) { this->size = factor; };
     void move(glm::vec3 position) { this->position = position; };
     void rotate(float angle, glm::vec3 rotationAxis)

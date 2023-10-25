@@ -11,6 +11,7 @@
 #include "shapes/shape.h"
 #include "shapes/cube.h"
 #include "shapes/sphere.h"
+#include "hud/crosshair.h"
 
 #include <iostream>
 
@@ -48,17 +49,16 @@ int main()
     }
     initialize_glad();
 
-    // build and compile our shader zprogram
-    // Shader lightingShader("assets/2.2.basic_lighting.vs", "assets/2.2.basic_lighting.fs");
     Shader lightingShader("assets/directional_lighting.vs", "assets/directional_lighting.fs");
-    // Shader lightingShader("assets/lighting.vs", "assets/lighting.fs");
-    // Shader lightCubeShader("assets/2.2.light_cube.vs", "assets/2.2.light_cube.fs");
+    // Shader simpleShader("assets/simple_lighting.vs", "assets/simple_lighting.fs");
 
     Cube cube(lightingShader, lightDir);
     Sphere sphere(lightingShader, lightDir, glm::vec3(1.0f, 0.0f, 0.0f), glm::vec3(0.0f, 2.0f, 0.0f));
     // Cube lightCube(lightCubeShader, lightDir, glm::vec3(1.0f, 1.0f, 1.0f), lightPos, glm::vec3(0.0f));
 
     Input input(camera, window);
+
+    Crosshair crosshair(lightingShader, 0.1f, 1.0f, glm::vec3(1.0f));
 
     // render loop
     while (!glfwWindowShouldClose(window))
@@ -74,6 +74,7 @@ int main()
         // clear screen
         glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        // glClear(GL_COLOR_BUFFER_BIT);
 
         // view/projection transformations
         glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
@@ -83,8 +84,11 @@ int main()
 
         // render the cube
         cube.rotate(glm::radians(static_cast<float>(glfwGetTime()) * 100.0f), glm::vec3(1.0f, 0.3f, 0.5f));
-        cube.draw(camera, projection, view);
-        sphere.draw(camera, projection, view);
+        cube.draw(camera);
+        sphere.draw(camera);
+
+        // Render the crosshair in the middle of the screen
+        crosshair.draw(camera);
 
         // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
         glfwSwapBuffers(window);

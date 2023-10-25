@@ -57,7 +57,7 @@ Sphere::~Sphere()
     glDeleteBuffers(1, &EBO);
 }
 
-void Sphere::draw(const Camera &camera, const glm::mat4 &projection, const glm::mat4 &view) const
+void Sphere::draw(const Camera &camera) const
 {
     shader.use();
     shader.setVec3("objectColor", color);
