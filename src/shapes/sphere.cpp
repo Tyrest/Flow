@@ -59,14 +59,7 @@ Sphere::~Sphere()
 
 void Sphere::draw(const Camera &camera) const
 {
-    shader.use();
-    shader.setVec3("objectColor", color);
-    shader.setVec3("lightColor", 1.0f, 1.0f, 1.0f);
-    shader.setVec3("lightDir", lightDir);
-    shader.setVec3("viewPos", camera.Position);
-
-    shader.setMat4("model", transform());
-
+    setupShader(camera);
     glBindVertexArray(VAO);
     glDrawElements(GL_TRIANGLES, indices.size() * sizeof(uint), GL_UNSIGNED_INT, 0);
 }

@@ -44,22 +44,13 @@ Crosshair::Crosshair(const Shader &shader, float size, float thickness, const gl
 
 void Crosshair::draw(const Camera &camera)
 {
-    glDisable(GL_DEPTH_TEST);
-
-    shader.use();
-    shader.setVec3("objectColor", 1.0f, 1.0f, 1.0f);
-    shader.setVec3("lightColor", 100.0f, 100.0f, 100.0f);
-    shader.setVec3("lightDir", 0.0f, 1.0f, 0.0f);
-    shader.setVec3("viewPos", camera.Position);
     glm::mat4 model = glm::mat4(1.0f);
-    model = glm::translate(model, camera.Position + camera.Front * 2.0f);
+    model = glm::translate(model, camera.Position + camera.Front * 0.2f);
     model = glm::rotate(model, -glm::radians(camera.Yaw) + glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
     model = glm::rotate(model, -glm::radians(camera.Pitch), glm::vec3(1.0f, 0.0f, 0.0f));
-    model = glm::scale(model, glm::vec3(size));
+    model = glm::scale(model, glm::vec3(size * 0.2f));
     shader.setMat4("model", model);
 
     glBindVertexArray(VAO);
     glDrawElements(GL_TRIANGLES, sizeof(triforce_indices), GL_UNSIGNED_INT, 0);
-
-    glEnable(GL_DEPTH_TEST);
 }

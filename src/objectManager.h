@@ -1,23 +1,23 @@
-// #include <GLFW/glfw3.h>
+#ifndef OBJECT_MANAGER_H
+#define OBJECT_MANAGER_H
 
-// #include "shapes/shape.h"
+#include <glad/gl.h>
+#include <GLFW/glfw3.h>
 
-// class ObjectManager
-// {
-// public:
-//     ObjectManager();
-//     ObjectManager(Camera *camera, GLFWwindow *window) : camera(camera), window(window) {}
-//     ~ObjectManager();
+#include "shapes/shape.h"
 
-//     void add(Shape *shape);
-//     void draw();
-//     void update(float deltaTime);
-//     void processInput(float deltaTime);
-//     void setCamera(Camera *camera);
-//     void setWindow(GLFWwindow *window);
+class ObjectManager
+{
+public:
+    static void add(Shape *shape);
+    static void draw(Camera &camera, GLFWwindow *window);
+    static void update(float deltaTime);
+    static void processInput(float deltaTime);
 
-// private:
-//     std::vector<Shape *> shapes;
-//     Camera *camera;
-//     GLFWwindow *window;
-// };
+private:
+    static std::vector<Shape *> shapes;
+    static Camera *camera;
+    static GLFWwindow *window;
+};
+
+#endif

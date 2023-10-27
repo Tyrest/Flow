@@ -19,7 +19,8 @@ public:
                                            position(position),
                                            angle(angle),
                                            rotationAxis(rotationAxis) {}
-    virtual ~Shape() {}
+    ~Shape() {}
+    void setupShader(const Camera &camera) const;
     virtual void draw(const Camera &camera) const = 0;
     void resize(float factor) { this->size = factor; };
     void move(glm::vec3 position) { this->position = position; };
@@ -28,6 +29,8 @@ public:
         this->angle = angle;
         this->rotationAxis = rotationAxis;
     };
+    GLuint VAO;
+    GLuint VBO;
 
 protected:
     float size;

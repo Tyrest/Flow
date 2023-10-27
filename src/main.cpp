@@ -11,7 +11,8 @@
 #include "shapes/shape.h"
 #include "shapes/cube.h"
 #include "shapes/sphere.h"
-#include "hud/crosshair.h"
+#include "hud/hud.h"
+#include "objectManager.h"
 
 #include <iostream>
 
@@ -54,11 +55,13 @@ int main()
 
     Cube cube(lightingShader, lightDir);
     Sphere sphere(lightingShader, lightDir, glm::vec3(1.0f, 0.0f, 0.0f), glm::vec3(0.0f, 2.0f, 0.0f));
+    ObjectManager::add(&cube);
+    ObjectManager::add(&sphere);
     // Cube lightCube(lightCubeShader, lightDir, glm::vec3(1.0f, 1.0f, 1.0f), lightPos, glm::vec3(0.0f));
 
     Input input(camera, window);
 
-    Crosshair crosshair(lightingShader, 0.1f, 1.0f, glm::vec3(1.0f));
+    Hud hud = Hud();
 
     // render loop
     while (!glfwWindowShouldClose(window))
@@ -84,11 +87,10 @@ int main()
 
         // render the cube
         cube.rotate(glm::radians(static_cast<float>(glfwGetTime()) * 100.0f), glm::vec3(1.0f, 0.3f, 0.5f));
-        cube.draw(camera);
-        sphere.draw(camera);
+        ObjectManager::draw(camera, window);
 
         // Render the crosshair in the middle of the screen
-        crosshair.draw(camera);
+        hud.draw(camera);
 
         // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
         glfwSwapBuffers(window);

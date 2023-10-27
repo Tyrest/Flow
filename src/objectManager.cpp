@@ -1,35 +1,36 @@
-// #include "objectManager.h"
+#include "objectManager.h"
 
-// ObjectManager::ObjectManager()
-// {
-//     this->camera = nullptr;
-//     this->window = nullptr;
-// }
+void ObjectManager::add(Shape *shape)
+{
+    shapes.push_back(shape);
+}
 
-// ObjectManager::~ObjectManager()
-// {
-//     for (auto shape : this->shapes)
-//     {
-//         delete shape;
-//     }
-// }
+void ObjectManager::draw(Camera &camera, GLFWwindow *window)
+{
+    int width, height;
+    glfwGetWindowSize(window, &width, &height);
 
-// void ObjectManager::add(Shape *shape)
-// {
-//     this->shapes.push_back(shape);
-// }
+    glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)width / (float)height, 0.1f, 100.0f);
+    glm::mat4 view = camera.GetViewMatrix();
+    for (uint i = 0; i < shapes.size(); i++)
+    {
+        shapes[i]->draw(camera);
+    }
+    // return nothing
+}
 
-// void ObjectManager::draw()
-// {
-//     glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
-//     glm::mat4 view = camera->GetViewMatrix();
-//     for (auto shape : this->shapes)
-//     {
-//         shape->draw(*this->camera, this->camera->getProjection(), this->camera->getView());
-//     }
-// }
+void ObjectManager::update(float deltaTime)
+{
+    // for (auto shape : shapes)
+    // {
+    //     shape.update(deltaTime);
+    // }
+}
 
-// void ObjectManager::update(float deltaTime);
-// void ObjectManager::processInput(float deltaTime);
-// void ObjectManager::setCamera(Camera *camera);
-// void ObjectManager::setWindow(GLFWwindow *window);
+void ObjectManager::processInput(float deltaTime)
+{
+}
+
+std::vector<Shape *> ObjectManager::shapes;
+Camera *ObjectManager::camera;
+GLFWwindow *ObjectManager::window;
