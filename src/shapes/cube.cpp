@@ -67,6 +67,13 @@ Cube::Cube(const Shader &shader, const glm::vec3 &lightDir, const glm::vec3 &col
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 }
 
+Cube::~Cube()
+{
+    glDeleteVertexArrays(1, &VAO);
+    glDeleteBuffers(1, &VBO);
+    glDeleteBuffers(1, &EBO);
+}
+
 void Cube::draw(const Camera &camera) const
 {
     setupShader(camera);
