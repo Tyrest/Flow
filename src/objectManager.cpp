@@ -12,11 +12,10 @@ void ObjectManager::draw(Camera &camera, GLFWwindow *window)
 
     glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)width / (float)height, 0.1f, 100.0f);
     glm::mat4 view = camera.GetViewMatrix();
-    for (uint i = 0; i < shapes.size(); i++)
+    for (auto shape : shapes)
     {
-        shapes[i]->draw(camera);
+        shape->draw(camera);
     }
-    // return nothing
 }
 
 void ObjectManager::update(float deltaTime)

@@ -1,6 +1,8 @@
 cmake_minimum_required(VERSION 3.12)
 project(Flow)
 
+set (CMAKE_CXX_STANDARD 20)
+
 # Find and configure GLFW
 find_package(glfw3 REQUIRED)
 include_directories(${GLFW_INCLUDE_DIRS})
