@@ -1,7 +1,3 @@
-#include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
-#include <glm/gtc/type_ptr.hpp>
-
 #include "sphere.h"
 #define PI 3.14159265358979323846f
 
@@ -23,47 +19,6 @@ const uint Sphere::test_indices[] = {
     5, 4, 1  // Lower right triangle
 };
 
-Sphere::Sphere(const Shader &shader, const glm::vec3 &lightDir, const glm::vec3 &color, const glm::vec3 &position, float angle, const glm::vec3 &rotationAxis) : Shape(shader, lightDir, color, position, angle, rotationAxis), interleavedStride(24)
-{
-    glGenVertexArrays(1, &VAO);
-    glGenBuffers(1, &VBO);
-    glGenBuffers(1, &EBO);
-
-    glBindVertexArray(VAO);
-    // 1. bind buffer
-    glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-    // 2. copy vertices array into buffer's memory
-    buildVertices(36, 18);
-    glBufferData(GL_ARRAY_BUFFER, interleavedVertices.size() * sizeof(float), interleavedVertices.data(), GL_STATIC_DRAW);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(uint), indices.data(), GL_STATIC_DRAW);
-    // 3. set vertex attribute pointers
-    // position attribute
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void *)nullptr);
-    glEnableVertexAttribArray(0);
-    // normal attribute
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void *)(3 * sizeof(float)));
-    glEnableVertexAttribArray(1);
-    // unbind buffers
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
-    glBindVertexArray(0);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-}
-
-Sphere::~Sphere()
-{
-    glDeleteVertexArrays(1, &VAO);
-    glDeleteBuffers(1, &VBO);
-    glDeleteBuffers(1, &EBO);
-}
-
-void Sphere::draw(const Camera &camera) const
-{
-    setupShader(camera);
-    glBindVertexArray(VAO);
-    glDrawElements(GL_TRIANGLES, indices.size() * sizeof(uint), GL_UNSIGNED_INT, 0);
-}
-
 void Sphere::clearVectors()
 {
     std::vector<float>().swap(vertices);
@@ -71,25 +26,25 @@ void Sphere::clearVectors()
     std::vector<uint>().swap(indices);
 }
 
-void Sphere::buildVertices(int sectorCount, int stackCount)
+void Sphere::buildVertices()
 {
     clearVectors();
 
     float x, y, z, xz;                  // vertex position
     float nx, ny, nz, lengthInv = 1.0f; // normal
 
-    float sectorStep = 2 * PI / sectorCount;
-    float stackStep = PI / stackCount;
+    float sectorStep = 2 * PI / SECTOR_COUNT;
+    float stackStep = PI / STACK_COUNT;
     float sectorAngle, stackAngle;
 
-    for (int i = 0; i <= stackCount; ++i)
+    for (int i = 0; i <= STACK_COUNT; ++i)
     {
         stackAngle = PI / 2 - i * stackStep; // starting from pi/2 to -pi/2
         xz = cosf(stackAngle);               // r * cos(u)
         y = sinf(stackAngle);                // r * sin(u)
 
-        // add (sectorCount+1) vertices per stack
-        for (int j = 0; j <= sectorCount; ++j)
+        // add (SECTOR_COUNT+1) vertices per stack
+        for (int j = 0; j <= SECTOR_COUNT; ++j)
         {
             sectorAngle = j * sectorStep; // starting from 0 to 2pi
 
@@ -112,12 +67,12 @@ void Sphere::buildVertices(int sectorCount, int stackCount)
     //  | /  |
     //  k2--k2+1
     unsigned int k1, k2;
-    for (int i = 0; i < stackCount; ++i)
+    for (int i = 0; i < STACK_COUNT; ++i)
     {
-        k1 = i * (sectorCount + 1); // beginning of current stack
-        k2 = k1 + sectorCount + 1;  // beginning of next stack
+        k1 = i * (SECTOR_COUNT + 1); // beginning of current stack
+        k2 = k1 + SECTOR_COUNT + 1;  // beginning of next stack
 
-        for (int j = 0; j < sectorCount; ++j, ++k1, ++k2)
+        for (int j = 0; j < SECTOR_COUNT; ++j, ++k1, ++k2)
         {
             // 2 triangles per sector excluding 1st and last stacks
             if (i != 0)
@@ -128,7 +83,7 @@ void Sphere::buildVertices(int sectorCount, int stackCount)
                 indices.push_back(k1 + 1);
             }
 
-            if (i != (stackCount - 1))
+            if (i != (STACK_COUNT - 1))
             {
                 // addIndices(k1 + 1, k2, k2 + 1); // k1+1---k2---k2+1
                 indices.push_back(k1 + 1);
