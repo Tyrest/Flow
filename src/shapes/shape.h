@@ -31,6 +31,7 @@ public:
     };
     GLuint VAO;
     GLuint VBO;
+    GLuint EBO;
 
 protected:
     float size;

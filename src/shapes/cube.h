@@ -13,7 +13,8 @@ public:
     void draw(const Camera &camera) const override;
 
 private:
-    const static float vertices[];
+    const static std::vector<float> vertices;
+    const static std::vector<uint> indices;
 };
 
 #endif
