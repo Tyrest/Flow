@@ -5,12 +5,12 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
+#include <btBulletDynamicsCommon.h>
+
 #include "shader.h"
 #include "camera.h"
 #include "input.h"
-#include "shapes/shape.h"
-#include "shapes/cube.h"
-#include "shapes/sphere.h"
+#include "shapes/shapes.h"
 #include "hud/hud.h"
 #include "objectManager.h"
 
@@ -50,9 +50,15 @@ int main()
     }
     initialize_glad();
 
+    btBroadphaseInterface *broadphase = new btDbvtBroadphase();
+
     Shader lightingShader("assets/directional_lighting.vs", "assets/directional_lighting.fs");
     // Shader simpleShader("assets/simple_lighting.vs", "assets/simple_lighting.fs");
 
+    // for (int i = 0; i < 10; i++)
+    // {
+    //     ObjectManager::add(new Cube(lightingShader, lightDir, glm::vec3(1.0f, 0.0f, 0.0f), glm::vec3(0.0f, i * 2.0f, 0.0f)));
+    // }
     Cube cube(lightingShader, lightDir);
     Sphere sphere(lightingShader, lightDir, glm::vec3(1.0f, 0.0f, 0.0f), glm::vec3(0.0f, 2.0f, 0.0f));
     ObjectManager::add(&cube);

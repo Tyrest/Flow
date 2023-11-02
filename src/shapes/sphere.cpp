@@ -40,8 +40,8 @@ void Sphere::buildVertices()
     for (int i = 0; i <= STACK_COUNT; ++i)
     {
         stackAngle = PI / 2 - i * stackStep; // starting from pi/2 to -pi/2
-        xz = cosf(stackAngle);               // r * cos(u)
-        y = sinf(stackAngle);                // r * sin(u)
+        xz = cosf(stackAngle) / 2;               // r * cos(u)
+        y = sinf(stackAngle) / 2;                // r * sin(u)
 
         // add (SECTOR_COUNT+1) vertices per stack
         for (int j = 0; j <= SECTOR_COUNT; ++j)

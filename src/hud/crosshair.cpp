@@ -48,7 +48,7 @@ void Crosshair::draw(const Camera &camera)
     model = glm::translate(model, camera.Position + camera.Front * 0.2f);
     model = glm::rotate(model, -glm::radians(camera.Yaw) + glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
     model = glm::rotate(model, -glm::radians(camera.Pitch), glm::vec3(1.0f, 0.0f, 0.0f));
-    model = glm::scale(model, glm::vec3(size * 0.2f));
+    model = glm::scale(model, glm::vec3(size * 0.1f));
     shader.setMat4("model", model);
 
     glBindVertexArray(VAO);
